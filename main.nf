@@ -92,8 +92,8 @@ process run_scpred_workflow {
                         -profile cluster'
                         --scpred_models ${params.scpred.scpred_models}\
                         --results_dir ${params.scpred.results_dir}\
-                        --query_10x_dir ${params.params.query_expr_data}\
-                        --norm_counts_slot ${params.scmap.norm_counts_slot}\
+                        --query_10x_dir ${params.query_expr_data}\
+                        --norm_counts_slot ${params.scpred.norm_counts_slot}\
                         --col_names ${params.scpred.col_names}\
                         --pred_threshold ${params.scpred.pred_threshold}
 
@@ -142,7 +142,7 @@ process generate_cl_dict{
     """
     build_cell_ontology_dict.R\
           --input-dir ${sdrfs}\
-          --condensed-sdrfs\
+          --condensed-sdrf ${params.label_analysis.condensed}\
           --output-dict-path cl_dictionary.rds
     """
 }
