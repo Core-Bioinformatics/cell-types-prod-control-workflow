@@ -58,7 +58,7 @@ process run_scmap_cell_workflow {
     memory { 16.GB * task.attempt }
 
     output:
-        file("scmap-cell_output.tsv") into SCMAP_CELL_OUTPUT
+        file("scmap-cell_combined_output.tsv") into SCMAP_CELL_OUTPUT
 
     """
     RESULTS_DIR=\$PWD
@@ -83,7 +83,7 @@ process run_scpred_workflow {
     memory { 16.GB * task.attempt }
 
     output:
-        file("scpred_output.tsv") into SCPRED_OUTPUT
+        file("scpred_combined_output.txt") into SCPRED_OUTPUT
 
     """
     RESULTS_DIR=\$PWD
