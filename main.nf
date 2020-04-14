@@ -143,7 +143,8 @@ process generate_cl_dict{
     build_cell_ontology_dict.R\
           --input-dir ${sdrfs}\
           --condensed-sdrf ${params.label_analysis.condensed}\
-          --output-dict-path cl_dictionary.rds
+          --output-dict-path cl_dictionary.rds\
+          --output-text-path cl_dictionary.tsv
     """
 }
 
