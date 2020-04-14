@@ -91,7 +91,7 @@ process run_scpred_workflow {
     nextflow run $PROD_WORKFLOWS/scpred-prod-workflow/main.nf\
                         -profile cluster\
                         --scpred_models ${params.scpred.scpred_models}\
-                        --results_dir ${params.scpred.results_dir}\
+                        --results_dir \$RESULTS_DIR\
                         --query_10x_dir ${params.query_expr_data}\
                         --norm_counts_slot ${params.scpred.norm_counts_slot}\
                         --col_names ${params.scpred.col_names}\
