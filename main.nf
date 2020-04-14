@@ -100,32 +100,79 @@ process run_scpred_workflow {
     """
 }
 
+// collate output tables into single channel 
+ALL_RESULTS = 
+    GARNETT_OUTPUT
+    .concat(SCMAP_CLUST_OUTPUT)
+    .concat(SCMAP_CELL_OUTPUT)
+    .concat(SCPRED_OUTPUT)
 
-process run_label_analysis {
-    conda "${baseDir}/envs/nextflow.yaml"
+
+// combine outputs into single directory 
+process combine_outputs {
+    input:
+        file(method_outputs) from ALL_RESULTS.collect()
+
+    output:
+        file('results_dir') into COMBINED_RESULTS_DIR
+
+    """
+    mkdir -p results_dir/
+    for file in ${method_outputs}
+    do
+        mv \$file results_dir
+    done
+    """
+}
+
+SDRFs = Channel.fromPath(params.label_analysis.sdrfs) 
+process generate_cl_dict{
+    conda "${baseDir}/envs/cell-types-analysis.yaml"
+    
     errorStrategy { task.exitStatus == 130 || task.exitStatus == 137  ? 'retry' : 'finish' }   
     maxRetries 5
     memory { 16.GB * task.attempt }
 
+    input:
+        file(sdrfs) from SDRFs
 
-    
+    output:
+        file("cl_dictionary.rds") into CL_DICT 
 
-
-
-
-
+    """
+    build_cell_ontology_dict.R\
+          --input-dir ${sdrfs}\
+          --condensed-sdrfs\
+          --output-dict-path cl_dictionary.rds
+    """
 }
 
+// generate consensus labels
+process run_label_analysis {
+    publishDir "${baseDir}/data", mode: 'copy'
+    conda "${baseDir}/envs/cell-types-analysis.yaml"
+    errorStrategy { task.exitStatus == 130 || task.exitStatus == 137  ? 'retry' : 'finish' }   
+    maxRetries 5
+    memory { 16.GB * task.attempt }
 
+    input:
+        file(results_dir) from COMBINED_RESULTS_DIR
+        file(cl_dict) from CL_DICT
 
+    output: 
+        file("summary_table.tsv") into SUMMARY_TABLE
+        file("raw_labels.tsv") into RAW_LABELS
 
-
-
-
-
-
-
-
-
-
+    """
+    get_consensus_output.R\
+          --input-dir ${results_dir}\
+          --tool-table ${params.label_analysis.tool_perf_table}\
+          --num-cores ${params.label_analysis.num_cores}\
+          --cl-dictionary ${cl_dict}\
+          --ontology-graph ${params.label_analysis.ontology_graph}\
+          --semantic-sim-metric ${params.label_analysis.sem_sim_metric}\
+          --summary-table-output-path summary_table.tsv
+          --raw-table-output-path raw_labels.tsv
+    """
+}
 
