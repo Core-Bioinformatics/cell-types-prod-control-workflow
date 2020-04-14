@@ -89,7 +89,7 @@ process run_scpred_workflow {
     RESULTS_DIR=\$PWD
 
     nextflow run $PROD_WORKFLOWS/scpred-prod-workflow/main.nf\
-                        -profile cluster'
+                        -profile cluster\
                         --scpred_models ${params.scpred.scpred_models}\
                         --results_dir ${params.scpred.results_dir}\
                         --query_10x_dir ${params.query_expr_data}\
