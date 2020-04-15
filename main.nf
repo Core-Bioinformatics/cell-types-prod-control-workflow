@@ -33,7 +33,7 @@ process run_scmap_cluster_workflow {
     memory { 16.GB * task.attempt }
 
     output:
-        file("scmap-cluster_output.tsv") into SCMAP_CLUST_OUTPUT
+        file("scmap-cluster_combined_output.tsv") into SCMAP_CLUST_OUTPUT
 
     """
     RESULTS_DIR=\$PWD
