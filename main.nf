@@ -172,7 +172,7 @@ process run_label_analysis {
           --cl-dictionary ${cl_dict}\
           --ontology-graph ${params.label_analysis.ontology_graph}\
           --semantic-sim-metric ${params.label_analysis.sem_sim_metric}\
-          --summary-table-output-path summary_table.tsv
+          --summary-table-output-path summary_table.tsv\
           --raw-table-output-path raw_labels.tsv
     """
 }
